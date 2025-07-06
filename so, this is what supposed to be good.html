@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <title>Prescription</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+  <style>
+    @page { size: A4; margin: 20mm }
+    body {
+      font-family: 'Siyam Rupali', 'Noto Sans Bengali', Arial, sans-serif;
+      margin: 0; padding: 0; font-size: 15px;
+    }
+    .container {
+      width: 100%; padding: 30px; box-sizing: border-box;
+    }
+    .top-row {
+      display: flex; justify-content: space-between; margin-bottom: 10px;
+    }
+    .form-row {
+      display: flex; align-items: center; margin-bottom: 10px;
+      font-family: Arial, sans-serif;
+    }
+    .form-row label {
+      width: 80px; margin-right: 10px; font-weight: bold;
+    }
+    .form-row input[type="text"],
+    input[type="text"] {
+      font-size: 14pt; background: transparent; border: none;
+      outline: none; padding: 2px 4px; box-sizing: border-box;
+    }
+    .form-row input[type="text"] {
+      padding: 8px; width: 200px;
+    }
+    .rx-advice-container {
+      display: flex; gap: 40px; margin-top: 20px;
+    }
+    .advice-section,
+    .rx-section {
+      width: 50%;
+    }
+    .section-title {
+      font-weight: bold; font-size: 20px; margin-bottom: 10px;
+    }
+    .advice {
+      width: 100%; padding: 10px; font-size: 15px;
+      line-height: 1.8; white-space: pre-line;
+      border: 1px solid #ddd; border-radius: 5px;
+      min-height: 250px; box-sizing: border-box;
+      overflow-wrap: break-word;
+    }
+    .medicine {
+      margin-bottom: 20px; font-size: 15px;
+      position: relative;
+    }
+    .med-number {
+      display: inline-block; margin-right: 5px;
+      vertical-align: middle; min-width: 20px;
+    }
+    .med-inline {
+      white-space: nowrap; vertical-align: middle;
+    }
+    .med-name,
+    .dose-input {
+      display: inline-block; vertical-align: middle;
+      font-size: 14pt; font-family: inherit;
+      border: none; outline: none; background: transparent;
+      padding: 0; margin: 0;
+    }
+    .dose-wrapper {
+      display: inline-flex; align-items: center;
+      margin: 0 2px; font-size: 14pt;
+      vertical-align: middle;
+    }
+    .dose-input {
+      width: 60px; text-align: center;
+    }
+    .med-comment {
+      width: 100%; min-height: 50px;
+      margin-top: 5px; font-size: 14pt;
+      font-family: inherit; line-height: 1.6;
+      resize: vertical; border: none;
+      outline: none; background: transparent;
+    }
+    .remove-med-btn {
+      background: transparent; border: none;
+      font-size: 16px; color: #c00;
+      cursor: pointer; position: absolute;
+      right: 0; top: 0; line-height: 1;
+      padding: 0 5px; user-select: none;
+    }
+    .remove-med-btn:hover { color: #900 }
+    .add-medicine-btn {
+      margin-top: 10px; padding: 6px 15px;
+      font-size: 14px; cursor: pointer;
+    }
+    @media print {
+      .print-btn,
+      .add-medicine-btn,
+      .remove-med-btn {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-row">
+      <input type="text" placeholder="Name" />
+      <input type="text" placeholder="Age" />
+      <input list="gender" placeholder="Select gender">
+      <datalist id="gender">
+        <option value="Male"><option value="Female">
+      </datalist>
+      <input type="text" id="datepicker" placeholder="DD/MM/YYYY" />
+      <input type="text" id="followupDatepicker" placeholder="Follow-up Date" />
+    </div>
+
+    <div class="form-row"><label for="phone">Phone:</label><input type="text" id="phone" placeholder="Phone"></div>
+    <div class="form-row"><label for="address">Address:</label><input type="text" id="address" placeholder="Address"></div>
+    <div class="form-row"><label for="reg">Reg:</label><input type="text" id="reg" placeholder="Reg"></div>
+    <div class="form-row"><label for="cc">C/C:</label><input type="text" id="cc" placeholder="C/C"></div>
+    <div class="form-row"><label for="weight">Weight:</label><input type="text" id="weight" placeholder="Weight"></div>
+
+    <div class="rx-advice-container">
+      <div class="advice-section">
+        <div class="section-title">Advice :</div>
+        <div class="advice" contenteditable="true" spellcheck="false">
+১. পর্যাপ্ত পানি পান করুন।
+২. নিয়মিত ব্যায়াম করুন।
+৩. ধূমপান, চা, পান, তামাক থেকে বিরত থাকুন।
+৪. অতিরিক্ত ভাজা-পোড়া, চিনি, লবণ, মশলাযুক্ত ও কাঁচা পেঁয়াজ খাওয়া থেকে বিরত থাকুন।
+৫. ৭ থেকে ৮ ঘন্টা ঘুমাতে হবে।
+৬. অতিরিক্ত মানসিক চাপ নেওয়া থেকে বিরত থাকুন।
+৭. সবসময় পরিষ্কার পরিচ্ছন্ন থাকুন।
+        </div>
+      </div>
+
+      <div class="rx-section">
+        <div class="section-title">Rx,</div>
+        <div id="medicine-section">
+          <div class="medicine">
+            <span class="med-number">1)</span>
+            <span class="med-inline">
+              <input type="text" list="meds" placeholder="Medicine Name" class="med-name" />
+              <span class="dose-wrapper">(</span>
+              <input type="text" placeholder="8+8+8" class="dose-input" />
+              <span class="dose-wrapper">)</span>
+            </span>
+            <button type="button" class="remove-med-btn" onclick="removeMedicine(this)">✖</button>
+            <br />
+            <textarea class="med-comment">৮ ফোঁটা হাফ কাপ পানির সাথে মিশিয়ে খাবেন। খাবারের আগে।
+(সকালে দাঁত ব্রাশ করার পূর্বে, দুপুর ও রাতে)</textarea>
+          </div>
+        </div>
+        <button type="button" class="add-medicine-btn" onclick="addMedicine()">+ Add Medicine</button>
+      </div>
+    </div>
+
+    <div class="note bold" style="margin-top:20px; white-space: pre-line;">
+      NB:<br>
+      ✔ তরল মেডিসিন খাবারের পূর্বে ১০ বার ঝাঁকিয়ে নিবেন।<br>
+      ✔ প্রতিটি মেডিসিনের আগে ৩০ মিনিট বিরতি রাখবেন।<br>
+      ✔ মেডিসিন সেবনের ২০ দিন পর কল করবেন।<br>
+      ✔ মাসিকের সময় তরল মেডিসিন বন্ধ রাখবেন।<br><br>
+      <span id="followup-text">(তারিখে ফলো-আপের জন্য কল করবেন)</span>
+    </div>
+
+    <datalist id="meds">
+      <option value="Bxpg-2c"><option value="Acg-Q"><option value="Klm-6x">
+      <option value="Amt-Q"><option value="Bx-Q"><option value="Amlodipine">
+      <option value="Atorvastatin"><option value="Azithromycin">
+      <option value="Albendazole"><option value="Aspirin">
+    </datalist>
+
+    <button class="print-btn" onclick="window.print()">🖨️ Print or Save as PDF</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script>
+    flatpickr("#datepicker", { dateFormat: "d/m/Y" });
+    flatpickr("#followupDatepicker", {
+      dateFormat: "d/m/Y",
+      onChange: (d) => {
+        const dt = d[0];
+        if (dt) {
+          const formatted = `${dt.getDate()}.${dt.getMonth()+1}.${dt.getFullYear()}`;
+          document.getElementById("followup-text").textContent =
+            `(${formatted} তারিখে ফলো-আপের জন্য কল করবেন)`;
+        }
+      }
+    });
+
+    let medCount = 1;
+    function addMedicine() {
+      medCount++;
+      const medSection = document.getElementById("medicine-section");
+      const div = document.createElement("div");
+      div.className = "medicine";
+      div.innerHTML = `
+        <span class="med-number">${medCount})</span>
+        <span class="med-inline">
+          <input type="text" list="meds" placeholder="Medicine Name" class="med-name" />
+          <span class="dose-wrapper">(</span>
+          <input type="text" placeholder="8+8+8" class="dose-input" />
+          <span class="dose-wrapper">)</span>
+        </span>
+        <button type="button" class="remove-med-btn" onclick="removeMedicine(this)">✖</button>
+        <br />
+        <textarea class="med-comment"></textarea>`;
+      medSection.appendChild(div);
+      updateMedicineNumbers();
+    }
+    function removeMedicine(btn) {
+      const meds = document.querySelectorAll(".medicine");
+      if (meds.length === 1) { alert("At least one medicine is required."); return; }
+      btn.parentElement.remove();
+      medCount--;
+      updateMedicineNumbers();
+    }
+    function updateMedicineNumbers() {
+      document.querySelectorAll(".medicine").forEach((med, i) => {
+        med.querySelector(".med-number").textContent = (i+1) + ")";
+      });
+      medCount = document.querySelectorAll(".medicine").length;
+    }
+  </script>
+</body>
+</html>

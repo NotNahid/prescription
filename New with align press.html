@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <title>Prescription</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <style>
+    @page {
+      size: A4;
+      margin: 20mm;
+    }
+    body {
+      font-family: 'Siyam Rupali', 'Noto Sans Bengali', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      font-size: 15px;
+    }
+    .container {
+      width: 100%;
+      padding: 30px;
+      box-sizing: border-box;
+    }
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+    }
+    .bold {
+      font-weight: bold;
+    }
+    .info {
+      margin: 10px 0;
+    }
+    .section-title {
+      font-weight: bold;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+   .medicine {
+  margin-bottom: 15px;
+  padding-left: 10px;
+}
+
+	
+	.section-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.advice {
+  max-width: 600px;
+  padding: 10px;
+ 
+  
+  font-size: 15px;
+  line-height: 1.8;
+  margin-bottom: 10px;
+}
+	
+    .note {
+      margin-top: 20px;
+      white-space: pre-line;
+    }
+    .rx {
+      font-weight: bold;
+      font-size: 18px;
+      margin-top: 20px;
+	  margin-left: 500px;
+    }
+    .input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 6px;
+      margin-left: 20px;
+    }
+    input {
+      font-size: 15px;
+      padding: 4px 8px;
+    }
+    @media print {
+      .print-btn {
+        display: none;
+      }
+    }
+	
+	
+	
+	input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14pt;
+    font-family: inherit;
+  }
+  input:focus {
+    outline: none;
+    box-shadow: none;
+  }
+  
+  
+    .form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-family: Arial, sans-serif;
+  }
+
+  .form-row label {
+    width: 80px; /* Adjust width as needed */
+    margin-right: 10px;
+    font-weight: bold;
+  }
+
+  .form-row input[type="text"] {
+    padding: 8px;
+    width: 200px;
+    font-size: 14px;
+  }
+  
+  .content-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.left-column, .right-column {
+  width: 50%;
+  box-sizing: border-box;
+}
+
+
+/* Tweak this to remove left offset */
+.rx {
+  margin-left: 0;
+}
+
+.medicine {
+  margin-bottom: 20px;
+}
+
+
+
+
+.dose-input {
+  width: 100px;
+  font-size: 14px;
+  padding: 4px;
+  margin: 5px 0;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.med-comment {
+  width: 100%;
+  height: 60px;
+  margin-top: 5px;
+  font-size: 14px;
+  padding: 6px;
+  box-sizing: border-box;
+  resize: vertical;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: inherit;
+}
+
+.add-medicine-btn {
+  margin-top: 10px;
+  padding: 8px 12px;
+  font-size: 14px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.add-medicine-btn:hover {
+  background-color: #45a049;
+}
+	
+  
+  
+  input[type="text"], .dose-input, .med-comment {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14pt;
+  font-family: inherit;
+  padding: 2px;
+  width: auto;
+  resize: none;
+}
+
+.med-comment {
+  width: 100%;
+  height: auto;
+  min-height: 50px;
+  line-height: 1.6;
+}
+
+  
+  
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="top-row">
+
+   <div class="field name"><input type="text" placeholder="Name" ></div>
+    <div class="field agegender"><input type="text" placeholder="Age"></div>
+ <div class="field agegender">
+ 
+  <input list="gender" id="genderInput" name="gender" placeholder="Select gender">
+  <datalist id="gender">
+    <option value="Male">
+    <option value="Female">
+  </datalist>
+</div>
+   <div class="field date">
+    <input type="text" id="datepicker" placeholder="DD/MM/YYYY">
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script>
+    flatpickr("#datepicker", {
+      dateFormat: "d/m/Y" // Day/Month/Year
+    });
+  </script>
+   
+  </div>
+
+<!-- Editable Patient Info -->
+ 
+ 
+<div class="form-row">
+  <label for="phone">Phone:</label>
+  <input type="text" id="phone" placeholder="Phone">
+</div>
+
+<div class="form-row">
+  <label for="address">Address:</label>
+  <input type="text" id="address" placeholder="Address">
+</div>
+
+<div class="form-row">
+  <label for="reg">Reg:</label>
+  <input type="text" id="reg" placeholder="Reg">
+</div>
+
+<div class="form-row">
+  <label for="cc">C/C:</label>
+  <input type="text" id="cc" placeholder="C/C">
+</div>
+
+<div class="form-row">
+  <label for="weight">Weight:</label>
+  <input type="text" id="weight" placeholder="Weight">
+</div>
+<div class="content-row">
+  <!-- Left side: Advice -->
+  <div class="left-column">
+    <div class="section-title">Advice :</div>
+    <div class="advice">
+      ১. পর্যাপ্ত পানি পান করুন।<br>
+      ২. নিয়মিত ব্যায়াম করুন।<br>
+      ৩. ধূমপান, চা, পান, তামাক থেকে বিরত থাকুন।<br>
+      ৪. অতিরিক্ত ভাজা-পোড়া, চিনি, লবণ, মশলাযুক্ত ও কাঁচা পেঁয়াজ খাওয়া থেকে বিরত থাকুন।<br>
+      ৫. ৭ থেকে ৮ ঘন্টা ঘুমাতে হবে।<br>
+      ৬. অতিরিক্ত মানসিক চাপ নেওয়া থেকে বিরত থাকুন।<br>
+      ৭. সবসময় পরিষ্কার পরিচ্ছন্ন থাকুন।
+    </div>
+  </div>
+
+  <!-- Right side: Rx + Medicines -->
+  <div class="right-column">
+  <div class="rx">Rx,</div>
+
+  <div id="medicine-section">
+    <div class="medicine">
+      <input type="text" list="meds" placeholder="Medicine Name">
+      (<input type="text" placeholder="Dose e.g. 8+8+8" class="dose-input">)
+      <br>
+      <textarea class="med-comment" placeholder="Write medicine instruction here..."></textarea>
+    </div>
+  </div>
+
+  <button type="button" onclick="addMedicine()" class="add-medicine-btn">+ Add Medicine</button>
+</div>
+
+
+<script>
+  let medCount = 1;
+
+  function addMedicine() {
+    medCount++;
+    const medSection = document.getElementById("medicine-section");
+
+    const newMed = document.createElement("div");
+    newMed.className = "medicine";
+
+    newMed.innerHTML = `
+      ${medCount}) <input type="text" list="meds" placeholder="Medicine Name">
+      (<input type="text" placeholder="Dose e.g. 8+8+8" class="dose-input">)
+      <br>
+      <textarea class="med-comment" placeholder="Write medicine instruction here..."></textarea>
+    `;
+
+    medSection.appendChild(newMed);
+  }
+</script>
+
+
+       
+
+  <div class="note bold">
+    NB:<br>
+    ✔ তরল মেডিসিন খাবারের পূর্বে ১০ বার ঝাঁকিয়ে নিবেন।<br>
+    ✔ প্রতিটি মেডিসিন খাওয়ার পূর্বে মিনিমাম ৩০মিনিট বিরতি দিয়ে খেতে হবে।<br>
+    ✔ মেডিসিন সেবনের ২০ দিন পর কল করবেন।<br>
+    ✔ মাসিকের সময় তরল মেডিসিন বন্ধ রাখবেন।<br><br>
+    (28.7.2025 তারিখে ফলো-আপের জন্য কল করবেন)
+  </div>
+</div>
+
+<datalist id="meds">
+  <option value="Bxpg-2c" />
+  <option value="Acg-Q" />
+  <option value="Klm-6x" />
+  <option value="Amt-Q" />
+  <option value="Bx-Q" />
+  <option value="Amlodipine" />
+  <option value="Atorvastatin" />
+  <option value="Azithromycin" />
+  <option value="Albendazole" />
+  <option value="Aspirin" />
+</datalist>
+
+<button class="print-btn" onclick="window.print()">🖨️ Print or Save as PDF</button>
+
+</body>
+</html>

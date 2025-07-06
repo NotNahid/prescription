@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <title>Editable Prescription</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      width: 210mm;
+      height: 297mm;
+      font-family: 'Siyam Rupali', 'Noto Sans Bengali', Arial, sans-serif;
+      font-size: 14pt;
+      position: relative;
+    }
+
+    input {
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 14pt;
+      font-family: inherit;
+      width: auto;
+    }
+
+    input:focus {
+      outline: none;
+    }
+
+    .field {
+      position: absolute;
+      white-space: pre-wrap;
+    }
+
+    /* Editable fields */
+    .name        { top: 20mm; left: 15mm; }
+    .agegender   { top: 20mm; left: 105mm; }
+    .date        { top: 20mm; left: 165mm; }
+
+    .number      { top: 30mm; left: 15mm; }
+    .address     { top: 30mm; left: 105mm; }
+
+    .reg         { top: 40mm; left: 15mm; }
+    .cc          { top: 40mm; left: 105mm; }
+
+    .weight      { top: 50mm; left: 15mm; }
+
+    .rx          { top: 60mm; left: 15mm; font-weight: bold; font-size: 16pt; }
+
+    .med1        { top: 70mm; left: 20mm; }
+    .med2        { top: 90mm; left: 20mm; }
+    .med3        { top: 112mm; left: 20mm; }
+    .med4        { top: 134mm; left: 20mm; }
+    .med5        { top: 150mm; left: 20mm; }
+
+    .nb          { top: 175mm; left: 20mm; width: 170mm; font-size: 13pt; }
+    .advice      { top: 210mm; left: 20mm; width: 170mm; font-size: 13pt; }
+    .followup    { top: 270mm; left: 20mm; }
+  </style>
+</head>
+<body>
+
+  <!-- Editable Patient Info -->
+  <div class="field name"><input type="text" placeholder="Name" value="কিহনুর"></div>
+  <div class="field agegender"><input type="text" placeholder="Age & Gender" value="28y Female"></div>
+  <div class="field date"><input type="text" placeholder="Date" value="28.6.2025"></div>
+
+  <div class="field number"><input type="text" placeholder="Phone" value="01850991200"></div>
+  <div class="field address"><input type="text" placeholder="Address" value="মেহশখালি"></div>
+
+  <div class="field reg"><input type="text" placeholder="Reg" value="B4-"></div>
+  <div class="field cc"><input type="text" placeholder="C/C" value="Leucorrhoea"></div>
+
+  <div class="field weight"><input type="text" placeholder="Weight" value="50kg"></div>
+
+  <!-- Rx -->
+  <div class="field rx">Rx,</div>
+
+  <!-- Editable Medicines -->
+  <div class="field med1">
+    1) <input type="text" list="meds" placeholder="Medicine 1" value="Bxpg-2c"> (8+8+8)<br>
+    ৮ ফোঁটা হাফ কাপ পানির সাথে মিশিয়ে খাবেন। খাবারের আগে।<br>
+    (সকালে দাঁত ব্রাশ করার পূর্বে, দুপুর ও রাতে)
+  </div>
+
+  <div class="field med2">
+    2) <input type="text" list="meds" placeholder="Medicine 2" value="Acg-Q"> (10+10+10)<br>
+    "১০ ফোঁটা হাফ কাপ পানির সাথে মিশিয়ে খাবেন। খাবারের পরে।<br>
+    (সকাল ও দুপুর, রাত)"
+  </div>
+
+  <div class="field med3">
+    3) <input type="text" list="meds" placeholder="Medicine 3" value="Klm-6x"> (5+5+5)<br>
+    ৭টি ট্যাবলেট হাফ কাপ, কুসুম গরম পানির সাথে মিশিয়ে খাবেন।<br>
+    খাবারের পরে। (সকাল, দুপুর ও রাতে)
+  </div>
+
+  <div class="field med4">
+    4) <input type="text" list="meds" placeholder="Medicine 4" value="Amt-Q"> (0+1+0)<br>
+    টেবিল চা চামচের ১ চামচ করে ঔষধ। ১ বেলা ভরা পেটে খেতে হবে। (দুপুর)
+  </div>
+
+  <div class="field med5">
+    5) <input type="text" list="meds" placeholder="Medicine 5" value="Bx-Q"> (0+1+0)<br>
+    টেবিল চা চামচের ১ চামচ করে ঔষধ। ১ বেলা ভরা পেটে খেতে হবে। (দুপুর)
+  </div>
+
+  <!-- NB Notes -->
+  <div class="field nb">
+    NB:<br>
+    ✔ তরল মেডিসিন খাবারের পূর্বে ১০ বার ঝাঁকিয়ে নিবেন।<br>
+    ✔ প্রতিটি মেডিসিন খাওয়ার পূর্বে মিনিমাম ৩০ মিনিট বিরতি দিয়ে খেতে হবে।<br>
+    ✔ মেডিসিন সেবনের ২০ দিন পর কল করবেন।<br>
+    ✔ মাসিকের সময় তরল মেডিসিন বন্ধ রাখবেন।
+  </div>
+
+  <!-- Advice Section -->
+  <div class="field advice">
+    ১. পর্যাপ্ত পানি পান করুন।<br>
+    ২. নিয়মিত ব্যায়াম করুন।<br>
+    ৩. ধূমপান, চা, পান, তামাক থেকে বিরত থাকুন।<br>
+    ৪. অতিরিক্ত ভাজা-পোড়া, চিনি, লবণ, মশলা জাতীয় ও কাঁচা পেঁয়াজ খাওয়া থেকে বিরত থাকুন।<br>
+    ৫. ৭ থেকে ৮ ঘণ্টা ঘুমাতে হবে।<br>
+    ৬. অতিরিক্ত মানসিক চাপ নেওয়া থেকে বিরত থাকুন।<br>
+    ৭. সবসময় পরিষ্কার পরিচ্ছন্ন থাকুন।
+  </div>
+
+  <!-- Follow-Up -->
+  <div class="field followup"><input type="text" value="(28.7.2025 তারিখে ফলো-আপের জন্য কল করবেন)"> </div>
+
+  <!-- Autocomplete List -->
+  <datalist id="meds">
+    <option value="Bxpg-2c">
+    <option value="Acg-Q">
+    <option value="Klm-6x">
+    <option value="Amt-Q">
+    <option value="Bx-Q">
+    <option value="Amlodipine">
+    <option value="Azithromycin">
+    <option value="Atorvastatin">
+    <option value="Albendazole">
+    <option value="Aspirin">
+  </datalist>
+
+</body>
+</html>
