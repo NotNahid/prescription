@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <title>Prescription</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+  <style>
+    /* Basic Page Setup for A4 Print */
+    @page { size: A4; margin: 20mm }
+    body {
+      font-family: 'Siyam Rupali', 'Noto Sans Bengali', Arial, sans-serif;
+      margin: 0; padding: 0;
+      font-size: 15px; /* Base font size for general text */
+    }
+    .container {
+      width: 100%;
+      padding: 20px; /* Reduced overall padding for the content area */
+      box-sizing: border-box;
+    }
+
+    /* Header Section (Name, Age, Gender, Date) */
+    .prescription-header {
+      display: flex;
+      justify-content: flex-end; /* Pushes the Age/Gender/Date group to the right */
+      align-items: baseline; /* Aligns text along the baseline */
+      margin-bottom: 15px; /* Space below the header */
+      font-size: 15px; /* Match body font size */
+    }
+    .prescription-header .header-input-container {
+        position: relative; /* Needed for absolute positioning of print-value */
+        display: inline-block; /* To allow inline flow */
+        margin-left: 20px; /* Spacing between header elements */
+    }
+    .prescription-header .header-input-container:first-child {
+      margin-right: auto; /* Pushes itself to the far left, and subsequent elements to the right */
+      margin-left: 0; /* Override default margin-left for the first input */
+    }
+
+    /* Styling for header inputs (screen view) */
+    .prescription-header input {
+      font-size: 1.2em; /* Slightly larger font for header inputs */
+      font-weight: bold;
+      width: auto; /* Allow content to dictate width */
+    }
+    /* Hide print-only span on screen */
+    .prescription-header .print-value {
+        display: none;
+    }
+
+    /* General Input and Textarea Styling for Print-like Appearance */
+    input[type="text"],
+    input[list],
+    textarea {
+      font-size: 15px; /* Consistent font size for inputs, matching body */
+      background: transparent; /* No background */
+      border: none; /* No borders */
+      outline: none; /* No focus outline */
+      padding: 0; /* Minimal padding */
+      box-sizing: border-box;
+      font-family: inherit; /* Inherit font from parent */
+      resize: none; /* Disable resizing for textareas by default */
+    }
+    input::placeholder, textarea::placeholder { /* Style placeholders */
+      color: #aaa; /* Lighter color for placeholder */
+      opacity: 1; /* Ensure visibility */
+    }
+    input[list="gender"] { /* Specific styling for the gender input to ensure no border/outline */
+      border: none;
+      outline: none;
+    }
+
+
+    /* Patient Details Section (Left Column, above Advice) */
+    .patient-details-section {
+      margin-bottom: 15px; /* Space below patient details and before Advice title */
+    }
+    .patient-detail-item {
+      display: flex; /* Use flex for label and value on the same line */
+      align-items: baseline; /* Align text baselines */
+      margin-bottom: 3px; /* Reduced spacing between each detail item */
+    }
+    .patient-detail-item .label {
+      font-weight: bold;
+      width: 70px; /* Fixed width for labels to align values */
+      flex-shrink: 0; /* Prevent label from shrinking */
+    }
+    .patient-detail-item .value-input {
+      flex-grow: 1; /* Allow input to take remaining space */
+      font-size: 15px; /* Match body font size for these inputs */
+      padding: 0;
+      width: auto; /* Allow input to size naturally */
+    }
+    /* Special styling for C/C detail to stack label and value */
+    .patient-detail-item.cc {
+        display: block; /* Make it a block to stack label and input */
+    }
+    .patient-detail-item.cc .label {
+        width: auto; /* Don't restrict width for C/C label */
+        margin-bottom: 0px; /* Reduced vertical space */
+        display: block; /* Make label a block */
+    }
+    .patient-detail-item.cc .value-input {
+        width: 100%; /* Full width for C/C input */
+        display: block; /* Make input a block */
+        padding-left: 20px; /* Indent the value */
+        font-size: 15px; /* Ensure font size is consistent */
+    }
+
+
+    /* Main two-column layout for Rx and Advice */
+    .rx-advice-container {
+      display: flex;
+      gap: 40px; /* Space between columns */
+      margin-top: 15px; /* Space from elements above */
+    }
+    .advice-section,
+    .rx-section {
+      width: 50%; /* Each column takes half the width */
+    }
+    .section-title {
+      font-weight: bold;
+      font-size: 20px; /* Larger font for section titles */
+      margin-bottom: 10px;
+    }
+    .advice {
+      width: 100%;
+      padding: 10px;
+      font-size: 15px;
+      line-height: 1.8; /* Increased line height for readability */
+      white-space: pre-line; /* Preserves line breaks from content */
+      border: none; /* No border for the advice box */
+      border-radius: 5px;
+      box-sizing: border-box;
+      overflow-wrap: break-word; /* Prevents long words from overflowing */
+    }
+
+    /* Medicine List Styling (Right Column) */
+    .medicine {
+      margin-bottom: 15px; /* Reduced space between each medicine entry */
+      font-size: 15px;
+      position: relative; /* For positioning the remove button */
+    }
+    .med-number {
+      display: inline-block;
+      margin-right: 5px;
+      vertical-align: top; /* Align number to the top of the line */
+      min-width: 20px;
+    }
+    .med-inline {
+      white-space: nowrap; /* Keep medicine name and dose on one line */
+      vertical-align: middle;
+    }
+    .med-name,
+    .dose-input {
+      font-size: 15px; /* Consistent font size for medicine name and dose */
+    }
+    .dose-wrapper {
+      display: inline-flex; /* For '(' and ')' around dose */
+      align-items: center;
+      margin: 0 2px;
+      font-size: 15px;
+      vertical-align: middle;
+    }
+    .dose-input {
+      width: 80px; /* INCREASED WIDTH for dose input */
+      text-align: center;
+    }
+    .med-comment {
+      width: 100%;
+      margin-top: 5px;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+
+    /* NB Section Styling (Below both columns) */
+    .note {
+      margin-top: 20px; /* Space from the columns above */
+      font-size: 15px; /* Consistent font size */
+      line-height: 1.5; /* Slightly reduced line height for compactness */
+    }
+    .note-editable-content { /* New rule for the editable part of NB */
+      white-space: pre-line; /* Preserves line breaks for editable content */
+      margin-bottom: 5px; /* Small space between editable content and date input */
+    }
+    .note-editable-content .bold { /* For "NB:" inside the editable section */
+      font-weight: bold;
+    }
+
+    /* Follow-up Date Input (in NB section) */
+    #followupDatepicker {
+      width: 100px; /* Adjust width to fit date */
+      display: inline-block;
+      font-family: inherit;
+      font-size: inherit;
+      padding: 0;
+      border: none;
+      outline: none;
+      background: transparent;
+      text-align: center; /* Center date text within the input */
+    }
+
+
+    /* Elements hidden for print (default) and shown for screen (media query) */
+    .remove-med-btn,
+    .add-medicine-btn,
+    .print-btn {
+      display: none; /* Hidden by default (for print) */
+    }
+
+    @media screen {
+        /* Show buttons and allow editing features only on screen */
+        .remove-med-btn {
+            display: inline-block; /* Show remove button */
+            position: absolute; /* Keep absolute position for editing mode */
+            right: 0; top: 0;
+            background: transparent; border: none;
+            font-size: 16px; color: #c00;
+            cursor: pointer;
+            padding: 0 5px; user-select: none;
+        }
+        .add-medicine-btn {
+            display: inline-block; /* Show add medicine button */
+            margin-top: 10px; padding: 6px 15px;
+            font-size: 14px; cursor: pointer;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .print-btn {
+            display: inline-block; /* Show print button */
+            position: fixed; /* Fixed position on screen */
+            bottom: 20px; right: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+        /* Allow resizing for textareas only on screen */
+        textarea.med-comment {
+            resize: vertical;
+        }
+        /* Add a subtle border to inputs for better visibility on screen while editing */
+        input[type="text"]:focus,
+        input[list]:focus,
+        textarea:focus {
+          border: 1px solid #aaa; /* Show a border on focus */
+          outline: none;
+          box-shadow: 0 0 3px rgba(0,0,0,0.2); /* Subtle shadow for focus */
+        }
+        /* And for contenteditable blocks (the Advice and NB sections) */
+        .advice[contenteditable]:focus,
+        .note-editable-content[contenteditable]:focus {
+            outline: 1px solid #aaa;
+            box-shadow: 0 0 3px rgba(0,0,0,0.2);
+        }
+    }
+
+    @media print {
+        /* Hide screen-only inputs and show print-only values */
+        .prescription-header input[type="text"],
+        .prescription-header input[list] {
+            display: none;
+        }
+        .prescription-header .print-value {
+            display: inline; /* Show the span that holds the input value */
+            font-size: 1.2em; /* Match input's screen font size */
+            font-weight: bold; /* Match input's screen font weight */
+            /* Ensure it aligns correctly */
+            vertical-align: baseline;
+            white-space: nowrap; /* Prevent breaking across lines */
+        }
+
+        /* Ensure textareas display all content and are not resizable */
+        textarea {
+            resize: none !important; /* Force no resize */
+            overflow-y: hidden !important; /* This is the key change to hide vertical scrollbars */
+            overflow-x: hidden !important; /* Hide horizontal scrollbars too, just in case */
+            height: auto !important; /* Allow content to dictate height */
+        }
+        /* Ensure contenteditable elements are displayed as static text */
+        .advice[contenteditable]:focus,
+        .note-editable-content[contenteditable]:focus {
+            outline: none;
+        }
+        .advice[contenteditable],
+        .note-editable-content[contenteditable] {
+            -webkit-user-modify: read-only; /* Make them read-only for print */
+            user-modify: read-only;
+        }
+        /* Remove any visible outlines/borders from inputs and textareas */
+        input[type="text"],
+        input[list],
+        textarea,
+        .advice,
+        .note-editable-content { /* Added note-editable-content here */
+            border: none !important;
+            outline: none !important;
+            background: transparent !important;
+        }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="prescription-header">
+      <div class="header-input-container">
+        <input type="text" id="nameInput" placeholder="Name" oninput="updatePrintValue('nameInput', 'printName')" />
+        <span id="printName" class="print-value"></span>
+      </div>
+      <div class="header-input-container">
+        <input type="text" id="ageInput" placeholder="Age" oninput="updatePrintValue('ageInput', 'printAge')" />
+        <span id="printAge" class="print-value"></span>
+      </div>
+      <div class="header-input-container">
+        <input list="gender" id="genderInput" placeholder="Gender" oninput="updatePrintValue('genderInput', 'printGender')">
+        <datalist id="gender">
+          <option value="Male"></option><option value="Female"></option>
+        </datalist>
+        <span id="printGender" class="print-value"></span>
+      </div>
+      <div class="header-input-container">
+        <input type="text" id="datepicker" placeholder="Date" oninput="updatePrintValue('datepicker', 'printDate')"/>
+        <span id="printDate" class="print-value"></span>
+      </div>
+    </div>
+
+    <div class="rx-advice-container">
+      <div class="advice-section">
+        <div class="patient-details-section">
+          <div class="patient-detail-item">
+            <span class="label">Number:</span>
+            <input type="text" class="value-input" placeholder="Number" />
+          </div>
+          <div class="patient-detail-item">
+            <span class="label">Address:</span>
+            <input type="text" class="value-input" placeholder="Address" />
+          </div>
+          <div class="patient-detail-item">
+            <span class="label">Reg:</span>
+            <input type="text" class="value-input" placeholder="Reg" />
+          </div>
+          <div class="patient-detail-item cc">
+            <span class="label">C/C:</span>
+          </div>
+          <div class="patient-detail-item cc">
+            <input type="text" class="value-input" placeholder="C/C" />
+          </div>
+          <div class="patient-detail-item">
+            <span class="label">Weight:</span>
+            <input type="text" class="value-input" placeholder="Weight" />
+          </div>
+        </div>
+
+        <div class="section-title">Advice :</div>
+        <div class="advice" contenteditable="true" spellcheck="false">
+১. পর্যাপ্ত পানি পান করুন।
+২. নিয়মিত ব্যায়াম করুন।
+৩. ধূমপান, চা, পান, তামাক থেকে বিরত থাকুন।
+৪. অতিরিক্ত ভাজা-পোড়া, চিনি, লবণ, মশলাযুক্ত ও কাঁচা পেঁয়াজ খাওয়া থেকে বিরত থাকুন।
+৫. ৭ থেকে ৮ ঘন্টা ঘুমাতে হবে।
+৬. অতিরিক্ত মানসিক চাপ নেওয়া থেকে বিরত থাকুন।
+৭. সবসময় পরিষ্কার পরিচ্ছন্ন থাকুন।
+        </div>
+      </div>
+
+      <div class="rx-section">
+        <div class="section-title">Rx,</div>
+        <div id="medicine-section">
+          <div class="medicine">
+            <span class="med-number">1)</span>
+            <span class="med-inline">
+              <input type="text" list="meds" placeholder="Medicine Name" class="med-name" />
+              <input type="text" list="dose-options" placeholder="(Dose)" class="dose-input" />
+            </span>
+            <button type="button" class="remove-med-btn" onclick="removeMedicine(this)">✖</button>
+            <br />
+            <textarea class="med-comment" placeholder="Medicine Comment"></textarea>
+          </div>
+        </div>
+        <button type="button" class="add-medicine-btn" onclick="addMedicine()">+ Add Medicine</button>
+      </div>
+    </div>
+
+    <div class="note">
+      <div class="note-editable-content" contenteditable="true" spellcheck="false">
+        <span class="bold">NB:</span><br>
+        ✔ তরল মেডিসিন খাবারের পূর্বে ১০ বার ঝাঁকিয়ে নিবেন।<br>
+        ✔ প্রতিটি মেডিসিনের আগে ৩০ মিনিট বিরতি রাখবেন।<br>
+        ✔ মেডিসিন সেবনের ২০ দিন পর কল করবেন।<br>
+        ✔ মাসিকের সময় তরল মেডিসিন বন্ধ রাখবেন।<br><br>
+      </div>
+      <input type="text" id="followupDatepicker" placeholder="DD.MM.YYYY" /> তারিখে ফলো-আপের জন্য কল করবেন
+    </div>
+
+    <!-- Datalists for medicine names and doses -->
+    <datalist id="meds">
+      <option value="Bxpg-2c"></option><option value="Acg-Q"></option><option value="Klm-6x"></option>
+      <option value="Amt-Q"></option><option value="Bx-Q"></option><option value="Amlodipine"></option>
+      <option value="Atorvastatin"></option><option value="Azithromycin"></option>
+      <option value="Albendazole"></option><option value="Aspirin"></option>
+    </datalist>
+    <datalist id="dose-options">
+      <option value="(1+2+3)"></option>
+      <option value="(1+2+6)"></option>
+      <!-- Add more dose options here as needed -->
+    </datalist>
+
+    <button class="print-btn" onclick="window.print()">🖨️ Print or Save as PDF</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script>
+    // Function to update the hidden print-only span with input value
+    function updatePrintValue(inputId, printSpanId) {
+      const input = document.getElementById(inputId);
+      const span = document.getElementById(printSpanId);
+      if (input && span) {
+        span.textContent = input.value;
+      }
+    }
+
+    // Initialize flatpickr for the primary date in the header
+    flatpickr("#datepicker", {
+      dateFormat: "d.m.Y",
+      onChange: function(selectedDates, dateStr, instance) {
+        updatePrintValue('datepicker', 'printDate');
+      }
+    });
+
+    // Initialize flatpickr for followupDatepicker
+    flatpickr("#followupDatepicker", {
+      dateFormat: "d.m.Y",
+    });
+
+    // Set up initial print values for header fields
+    document.addEventListener('DOMContentLoaded', () => {
+        updatePrintValue('nameInput', 'printName');
+        updatePrintValue('ageInput', 'printAge');
+        updatePrintValue('genderInput', 'printGender');
+        updatePrintValue('datepicker', 'printDate'); // For cases where defaultDate fills it
+    });
+
+
+    let medCount = document.querySelectorAll(".medicine").length; // Initialize with existing meds
+
+    function addMedicine() {
+      medCount++;
+      const medSection = document.getElementById("medicine-section");
+      const div = document.createElement("div");
+      div.className = "medicine";
+      // Removed dose-wrapper spans, placeholder now includes brackets
+      div.innerHTML = `
+        <span class="med-number">${medCount})</span>
+        <span class="med-inline">
+          <input type="text" list="meds" placeholder="Medicine Name" class="med-name" />
+          <input type="text" list="dose-options" placeholder="(Dose)" class="dose-input" />
+        </span>
+        <button type="button" class="remove-med-btn" onclick="removeMedicine(this)">✖</button>
+        <br />
+        <textarea class="med-comment" placeholder="Medicine Comment"></textarea>`;
+      medSection.appendChild(div);
+      updateMedicineNumbers();
+    }
+    function removeMedicine(btn) {
+      const meds = document.querySelectorAll(".medicine");
+      if (meds.length === 1) {
+        alert("At least one medicine is required.");
+        return;
+      }
+      btn.parentElement.remove();
+      medCount--;
+      updateMedicineNumbers();
+    }
+    function updateMedicineNumbers() {
+      document.querySelectorAll(".medicine").forEach((med, i) => {
+        med.querySelector(".med-number").textContent = (i + 1) + ")";
+      });
+      medCount = document.querySelectorAll(".medicine").length;
+    }
+    // Initial call to set correct numbers if HTML is pre-filled
+    updateMedicineNumbers();
+  </script>
+</body>
+</html>
